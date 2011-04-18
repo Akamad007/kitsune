@@ -251,12 +251,14 @@ a.btn-upload {
 }
 
 #gallery-upload-modal .row-left {
+    background-color: #fff;
     float: left;
     font-weight: bold;
     width: 130px;
 }
 
 #gallery-upload-modal .row-right {
+    background-color: #fff;
     margin: 0 0 15px 140px;
     min-height: 42px;
 }

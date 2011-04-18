@@ -11,7 +11,7 @@
                 webm: ['webm']},
             max_size: {
                 file: $('#gallery-upload-modal').data('max-image-size'),
-                flv: $('#gallery-upload-modal').data('max-video-size'),
+                flv: $('#gallery-upload-modal').data('max-video-size')
             }
         };
     CONSTANTS.extensions['thumbnail'] = CONSTANTS.extensions['file'];
@@ -241,9 +241,11 @@
          * Validates uploaded file meets criteria in mapping:
          * -- correct extension
          * -- enable submit button if form is ready to submit
-         * TODO: test in IE/no-file-API-supported browser
          */
         isValidFile: function ($input) {
+            if (!$input[0].files) {
+                return true;
+            }
             var file = $input[0].files[0],
                 type = $input.attr('name');
             var file_ext = file.name.split(/\./).pop().toLowerCase();
@@ -416,9 +418,11 @@
                 $form = $a.closest('form');
             var $input = $form.find('input[name="' + type + '"]');
             var form_target = $input.closest('form').attr('target');
-            $('iframe[name="' + form_target + '"]')[0].src = null;
-            $form.find('.progress.' + type).hideFade();
-            self._reUpload($form, type);
+            if ($('iframe[name="' + form_target + '"]')[0].src) {
+                $('iframe[name="' + form_target + '"]')[0].src = null;
+                $form.find('.progress.' + type).hideFade();
+                self._reUpload($form, type);
+            }
         },
         /*
          * Abstracts common code for re-uploading image/video
