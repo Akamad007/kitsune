@@ -44,5 +44,8 @@
     </div>
     <h4>{{ _('Content:') }}</h4>
     {{ diff_table(revision_from.content, revision_to.content) }}
+    <div id="wide-diff">
+      {{ unified_diff(revision_from.content, revision_to.content) }}
+    </div>
   </div>
 {% endif %}

@@ -772,6 +772,15 @@ td.diff_header {
     background-color:#ffaaaa;
 }
 
+#wide-diff {
+    overflow: auto;
+    width: 729px;
+}
+
+#wide-diff table.diff {
+    margin-bottom: 0;
+}
+
 /* Delete Revision */
 #delete-revision label {
     display: block;
