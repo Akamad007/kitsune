@@ -42,7 +42,7 @@
         <p>data-title kbox</p>
       </div>
     </div>
-    
+
     <div id="showfor">
       <div class="help-with-selects">
         <select class="os" data-oses="{&#34;maemo&#34;: true, &#34;win&#34;: true, &#34;mac&#34;: true, &#34;android&#34;: true, &#34;linux&#34;: true}">
@@ -73,11 +73,16 @@
         <span class="for" data-for="m4">m4</span>
       </div>
     </div>
+
+    <div id="gallery">
+      {% include "gallery/includes/upload_media_form.html" %}
+    </div>
   </div>
 
 
   <script src="{{ url('jsi18n') }}/build:{{ BUILD_ID_JS }}"></script>
   {{ js('common') }}
+  {{ js('gallery') }}
   <script type="text/javascript" src="{{ url('qunit_js') }}"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/libs/jquery.mockjax.js"></script>
   {% for url in suite.extra_urls %}

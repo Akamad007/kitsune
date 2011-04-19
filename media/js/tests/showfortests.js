@@ -2,7 +2,7 @@ $(document).ready(function(){
 
 var showforFixture = {
     setup: function() {
-        var $sandbox = tests.createSandbox('#showfor');
+        var $sandbox = tests.createSandbox('#showfor'),
             options = {
                 osSelector: 'select.os',
                 browserSelector: 'select.browser'
@@ -32,7 +32,6 @@ function assertNotHidden($sandbox, forVals) {
         equals($sandbox.find('[data-for="' + forVals[i] + '"]:hidden').length, 0,
                '[data-for=' + forVals[i] + '] is not hidden');
     }
-   
 }
 
 test('default', function() {

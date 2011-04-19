@@ -545,4 +545,6 @@
         $('#gallery-upload-type').hasClass('draft')) {
         $('#btn-upload').click();
     }
+
+    k.GalleryUpload = GalleryUpload;
 })(jQuery);

@@ -16,6 +16,7 @@ import django_qunit.views
 import jingo
 from PIL import Image
 
+from gallery.views import _init_forms
 from sumo.urlresolvers import reverse
 
 
@@ -175,4 +176,9 @@ def monitor(request):
 def kitsune_qunit(request, path):
     """View that hosts QUnit tests."""
     ctx = django_qunit.views.get_suite_context(request, path)
+    drafts = {'image': None, 'video': None}
+    image_form, video_form, upload_type_form = _init_forms(request, drafts)
+    ctx.update({'image_form': image_form, 'video_form': video_form,
+                'upload_type_form': upload_type_form,
+                'media_type': 'video'})
     return jingo.render(request, 'tests/qunit.html', ctx)
