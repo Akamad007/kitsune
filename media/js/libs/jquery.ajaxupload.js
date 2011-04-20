@@ -97,16 +97,19 @@ jQuery.fn.ajaxSubmitInput = function (options) {
         accept: false,
         inputEvent: 'change',
         beforeSubmit: function() {},
+        $placeholder: $('<div style="display:none" id="placeholder_' +
+                        uniqueID + '" class=">'),
         onComplete: function() {}
     }, options);
 
-    var uniqueID = Math.random() * 100000,
+    var uniqueID = Math.round(Math.random() * 100000),
         $input = this,
         $parentForm = $input.closest('form'),
         iframeName = 'upload_' + uniqueID,
-        $form = '<form class="upload-input" action="' +
-                options.url + '" target="' + iframeName +
-                '" method="post" enctype="multipart/form-data"/>',
+        $form = $('<form style="display:none" id="form_' + uniqueID +
+                 '" class="upload-input" action="' +
+                 options.url + '" target="' + iframeName +
+                 '" method="post" enctype="multipart/form-data"/>'),
         $iframe = $('<iframe name="' + iframeName +
                    '" style="position:absolute;top:-9999px;" />')
                    //'" style="position:fixed;top:0px;width:500px;height:350px" />')
@@ -117,8 +120,11 @@ jQuery.fn.ajaxSubmitInput = function (options) {
         $input.attr('accept', options.accept);
     }
 
-    $input.wrap($form);
-    $form = $input.closest('form');
+    // prepare input, placeholder, and form for DOM shuffle.
+    $input.data('iframe-target', iframeName);
+    options.$placeholder.data('iframe-target', iframeName).insertAfter($input);
+    $form.appendTo('body');
+
     // add the csrfmiddlewaretoken to the upload form
     $('input[name="csrfmiddlewaretoken"]').first().clone().appendTo($form);
 
@@ -128,13 +134,16 @@ jQuery.fn.ajaxSubmitInput = function (options) {
     });
 
     $input.bind(options.inputEvent, function() {
+        $input.appendTo($form);
         passJSON = options.beforeSubmit($input);
 
         if (false === passJSON) {
+            $input.insertBefore(options.$placeholder);
             return false;
         }
 
         $form.submit();
+        $input.insertBefore(options.$placeholder);
     });
 
     return this;

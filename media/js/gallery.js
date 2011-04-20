@@ -146,6 +146,9 @@
                         }
                         return self.startUpload($file);
                     },
+                    $placeholder: $('<input style="display:none">')
+                        .attr('name', $file.attr('name'))
+                        .attr('class', 'placeholder-' + $file.attr('name')),
                     onComplete: function($input, iframeContent, options) {
                         $input.closest('form')
                             .trigger('ajaxComplete')[0].reset();
@@ -417,7 +420,10 @@
                 type = $a.attr('class'),
                 $form = $a.closest('form');
             var $input = $form.find('input[name="' + type + '"]');
-            var form_target = $input.closest('form').attr('target');
+            if (!$input || !$input.length) {
+                $input = $form.find('.placeholder-' + type);
+            }
+            var form_target = $input.data('iframe-target');
             if ($('iframe[name="' + form_target + '"]')[0].src) {
                 $('iframe[name="' + form_target + '"]')[0].src = null;
                 $form.find('.progress.' + type).hideFade();
