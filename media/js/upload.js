@@ -35,15 +35,14 @@ $(document).ready(function () {
         $form.removeAttr('enctype');
         $(this).ajaxSubmitInput({
             url: $(this).closest('.attachments-upload').data('post-url'),
-            beforeSubmit: function($input) {
-                var $divUpload = $input.closest('.attachments-upload'),
+            beforeSubmit: function($input, $placeholder) {
+                var $divUpload = $placeholder.closest('.attachments-upload'),
                     $options = {
                         progress: $divUpload.find('.upload-progress'),
                         add: $divUpload.find('.add-attachment'),
                         adding: $divUpload.find('.adding-attachment'),
                         loading: $divUpload.find('.uploaded')
                     };
-
                 // truncate filename
                 $options.filename = $input.val().split(/[\/\\]/).pop();
                 if ($options.filename.length > UPLOAD.max_filename_length) {
@@ -59,8 +58,8 @@ $(document).ready(function () {
                 $options.progress.addClass('show');
                 return $options;
             },
-            onComplete: function($input, iframeContent, $options) {
-                $input.closest('form')[0].reset();
+            onComplete: function($input, $placeholder, iframeContent, $options) {
+                $input.val('');
                 if (!iframeContent) {
                     return;
                 }

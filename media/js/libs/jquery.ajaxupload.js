@@ -39,8 +39,8 @@ jQuery.fn.wrapDeleteInput = function (options) {
     $that.ajaxSubmitInput({
         url: $that.attr('data-url'),
         inputEvent: 'click',
-        beforeSubmit: function($input) {
-            var $overlay = $input.closest('.overlay', $attachment);
+        beforeSubmit: function($input, $placeholder) {
+            var $overlay = $placeholder.closest('.overlay', $attachment);
             if ($overlay.length <= 0) {
                 $overlay = $('<div class="overlay"></div>')
                                .appendTo($attachment);
@@ -48,7 +48,7 @@ jQuery.fn.wrapDeleteInput = function (options) {
             $overlay.show();
             $image.fadeTo(500, 0.5);
         },
-        onComplete: function($input, iframeContent, $options) {
+        onComplete: function($input, $placeholder, iframeContent, $options) {
             if (!iframeContent) {
                 $image.css('opacity', 1);
                 return;
@@ -92,24 +92,24 @@ jQuery.fn.ajaxSubmitInput = function (options) {
         return this;
     }
 
+    var uniqueID = Math.round(Math.random() * 100000);
     options = $.extend({
         url: '/upload',
         accept: false,
         inputEvent: 'change',
         beforeSubmit: function() {},
-        $placeholder: $('<div style="display:none" id="placeholder_' +
-                        uniqueID + '" class=">'),
+        $placeholder: $('<div>').css('display', 'none')
+                               .attr('id', 'placeholder_' + uniqueID),
         onComplete: function() {}
     }, options);
 
-    var uniqueID = Math.round(Math.random() * 100000),
-        $input = this,
+    var $input = this,
         $parentForm = $input.closest('form'),
         iframeName = 'upload_' + uniqueID,
         $form = $('<form style="display:none" id="form_' + uniqueID +
                  '" class="upload-input" action="' +
                  options.url + '" target="' + iframeName +
-                 '" method="post" enctype="multipart/form-data"/>'),
+                 '" method="POST" enctype="multipart/form-data"/>'),
         $iframe = $('<iframe name="' + iframeName +
                    '" style="position:absolute;top:-9999px;" />')
                    //'" style="position:fixed;top:0px;width:500px;height:350px" />')
@@ -130,18 +130,19 @@ jQuery.fn.ajaxSubmitInput = function (options) {
 
     $iframe.load(function() {
         var iframeContent = $iframe[0].contentWindow.document.body.innerHTML;
-        options.onComplete($input, iframeContent, passJSON);
+        options.onComplete($input, options.$placeholder, iframeContent, passJSON);
     });
 
     $input.bind(options.inputEvent, function() {
         $input.appendTo($form);
-        passJSON = options.beforeSubmit($input);
+        passJSON = options.beforeSubmit($input, options.$placeholder);
 
         if (false === passJSON) {
-            $input.insertBefore(options.$placeholder);
+            $input.val('').insertBefore(options.$placeholder);
             return false;
         }
-
+        // TODO: for some reason, the Post Reply form on questions is getting
+        // submitted somehow. Figure that out and fix it.
         $form.submit();
         $input.insertBefore(options.$placeholder);
     });

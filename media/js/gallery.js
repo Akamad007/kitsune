@@ -139,20 +139,20 @@
                 var $file = $(this), $form = $file.closest('.upload-form');
                 $file.ajaxSubmitInput({
                     url: $form.data('post-url'),
-                    beforeSubmit: function($input) {
-                        if (!self.isValidFile($file)) {
-                            self.uploadError($file, 'invalid');
+                    beforeSubmit: function($input, $placeholder) {
+                        if (!self.isValidFile($input)) {
+                            self.uploadError($input, 'invalid');
                             return false;
                         }
-                        return self.startUpload($file);
+                        return self.startUpload($input, $placeholder);
                     },
                     $placeholder: $('<input style="display:none">')
                         .attr('name', $file.attr('name'))
                         .attr('class', 'placeholder-' + $file.attr('name')),
-                    onComplete: function($input, iframeContent, options) {
+                    onComplete: function($input, $placeholder, iframeContent, options) {
                         $input.closest('form')
                             .trigger('ajaxComplete')[0].reset();
-                        self.uploadComplete($file, iframeContent, options);
+                        self.uploadComplete($file, $placeholder, iframeContent, options);
                     }
                 });
             });
@@ -263,8 +263,8 @@
          * -- disable submit buttons (happens automatically)
          * -- return the truncated filename for later use
          */
-        startUpload: function($input) {
-            var $form = $input.closest('.upload-form'),
+        startUpload: function($input, $placeholder) {
+            var $form = $placeholder.closest('.upload-form'),
                 filename = $input.val().split(/[\/\\]/).pop(),
                 $progress = $('.progress', $form)
                     .filter('.' + $input.attr('name'));
@@ -286,7 +286,7 @@
          * Dispatches to uploadError or uploadSuccess depending on the
          * response received from the ajax request.
          */
-        uploadComplete: function($input, iframeContent, options) {
+        uploadComplete: function($input, $placeholder, iframeContent, options) {
             if (!iframeContent) {
                 return;
             }
@@ -311,7 +311,7 @@
                 return false;
             }
             // Success!
-            self.uploadSuccess($input, iframeJSON, options.filename);
+            self.uploadSuccess($input, $placeholder, iframeJSON, options.filename);
         },
         /*
          * Fired after upload is complete, if isValidFile is true, and server
@@ -320,9 +320,9 @@
          * -- generate image/video preview
          * -- create cancel button and bind its click event
          */
-        uploadSuccess: function($input, iframeJSON, filename) {
+        uploadSuccess: function($input, $placeholder, iframeJSON, filename) {
             var type = $input.attr('name'),
-                $form = $input.closest('.upload-form'),
+                $form = $placeholder.closest('.upload-form'),
                 $cancel_btn = $('.upload-action input[name="cancel"]', $form),
                 $content, attrs = {},
                 $preview_area,
